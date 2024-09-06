@@ -1,8 +1,9 @@
 import { cart, removeFromCart, updateDeliveryOption } from "../../data/cart.js";
-import { products } from "../../data/products.js";
+import { getProduct, products } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
-import { deliveryOptions } from "../../data/deliveryOptions.js";
+import { deliveryOptions,getDeliveryOption } from "../../data/deliveryOptions.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js"
+import { renderPaymentSummary } from "./paymentSummary.js";
 
 export function renderOrderSummary()
 {
@@ -18,10 +19,10 @@ cart.forEach((cartItem)=>
 {
 
     const productId=cartItem.productId;
-    let matchingProduct=products.find((product)=>productId===product.id);
+    let matchingProduct=getProduct(productId);
     //console.log(matchingProduct);
     const deliveryOptionId=cartItem.deliveryOptionId;
-    let deliveryOption=deliveryOptions.find((deliveryOptions)=>deliveryOptions.id===deliveryOptionId)
+let deliveryOption=getDeliveryOption(deliveryOptionId);
     const dateStr=findDeliveryDate(deliveryOption);
     cartSummaryHTML+=`
 <div class="cart-item-container 
@@ -105,9 +106,9 @@ link.addEventListener('click',()=>
 {
 const productId=link.dataset.productId;
 removeFromCart(productId);
-
 const container=document.querySelector(`.js-cart-item-container-${productId}`);
 container.remove();
+renderPaymentSummary();
 //console.log(cart);
 })
 })
@@ -119,6 +120,7 @@ document.querySelectorAll('.js-delivery-option').forEach((radio) => {
         if (productId && deliveryOptionId) {
             updateDeliveryOption(productId, deliveryOptionId);
             renderOrderSummary();
+            renderPaymentSummary();
         } else {
             console.error('Product ID or Delivery Option ID is missing.');
         }

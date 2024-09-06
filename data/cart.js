@@ -57,4 +57,13 @@ export function updateDeliveryOption(productId, deliveryOptionId) {
     }
     saveToStorage();
 }
+export function updateCartQuantity()
+{
+    let initialCartQuantity = 0;
+cart.forEach((cartItem) => {
+    initialCartQuantity += cartItem.quantity;
+});
+document.querySelector('.js_cart_quantity').innerHTML = initialCartQuantity;
+saveToStorage();
 
+}
